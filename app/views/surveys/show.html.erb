@@ -1,0 +1,206 @@
+<script>
+  function highlight_winner(participantes) {
+    $('td.info').each(function(){
+      removeItem = $(this).children().children().text();
+      participantes.splice( $.inArray(removeItem, participantes), 1 );
+    });
+    var item = participantes[Math.floor(Math.random()*participantes.length)];
+    $("h3:contains('" + item + "')").parent().parent().addClass('info');
+    
+  }
+
+  
+  
+</script>
+
+
+<p id="notice"><%= notice %></p>
+
+<% participants = ['Juampi', 'Nacho', 'Saúl', 'Machin', 'Randy', 'Freddy', 'Luis', 'César', 'Eve', 'Cristian', 'Jhonny', 'Esteban', 'Jimmy', 'Omar', 'Victor', 'Mariela', 'David', 'Maynor'] %>
+<% alphabet = Array('A'..'Z') %>
+
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">LA TRIVIA LOCA</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="success"><a href="#participantes">Seleccionar Participante</a></li>
+        <li><a href="#preguntas">Ir a la sección de Preguntas</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class='row' style='margin-top: 50px;'>
+<div class="col-md-offset-1 col-md-3" style="padding-top: 50px;">
+<div><%= image_tag("1.jpg", class: 'img_border') %></div>
+<div><%= image_tag("3.jpg", class: 'img_border') %></div>
+</div>
+<div class="col-md-4">
+  <div class='survey_title h1 text-center'><span class='titletext'> <%= @survey.name %><div class='small' style="color: rgba(10, 39, 145, 1);"><%= 'Y más...' %></div></div>
+  <blockquote class="blockquote h3" style="padding-top: 50px;">
+  <div>
+  <h2>En las fotos hay dos personas combinadas, quiénes son?</h2>
+</blockquote>
+</div>
+<div class="col-md-4" style="padding-top: 50px;">
+<%= image_tag("2.jpg", class: 'img_border') %>
+<div><%= image_tag("4.jpg", class: 'img_border') %></div>
+</div>
+</div>
+
+<div id='participantes' style='margin-top: 50px;' class='row'>
+  <div class='col-xs-12'>
+  <br/>
+<%# audio_tag("countdown.m4a", autoplay: false, controls: false, id: 'audiocountdown') %>
+  <table class='table table-striped table-hover table-condensed'>
+  <thead>
+    <tr>
+    </tr>
+    <tr>
+    </tr>
+    <tr>
+        <th class='info' colspan='2'>
+          <h2 class='text-center'><div class='btn btn-primary btn-lg text-center center-block' onClick="highlight_winner(<%= participants %>);" type="button"> <strong>SELECCIONAR PARTICIPANTE ALEATORIAMENTE</strong></div></h2>
+        </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% participants.each_with_index do |p, i| %>
+      
+        
+       <% if (i+1).odd? %>
+        <tr class='active'>
+          <td id='participante' class='text-center active'>
+            <span  class='text-center'><h3><%= p.gsub('_', '_') %></h3></span>
+          </td>
+        <% else %>
+          <td id='participante' class='text-center active'>
+            <span  class='text-center'><h3><%= p.gsub('_', '_') %></h3></span>
+          </td>
+         </tr>
+        <% end %>
+
+    <% end %>
+
+  </tbody>
+</table>
+
+
+</div>  
+</div>
+
+<div id='preguntas' class='row'>
+
+<div class='col-xs-12'>
+  <div class="time"></div>
+<p>
+  <br/><br/>
+  <div class='survey_title h1 text-center'><span class='titletext'> Sección de Preguntas</div>
+  
+</p>
+
+<ol>
+<% @survey.questions.each_with_index do |question, u| %>
+  <div class='row' style='margin-top: 25px'>
+      <a style='text-decoration: none;' href="#question_<%= u %>" onClick="setTimer(<%= u %>)">
+
+        <button id='gelly' class="<%= 'b' + u.to_s %> btn btn-lg btn-primary btn-outline center-block" type='button'><div class='texto_con_gradiente'><span class='glyphicon glyphicon-question-sign'></span> <strong><%= question.content %></strong> <span class='glyphicon glyphicon-question-sign'></span></div></button>
+      </a>
+
+</div>
+    
+<% end %>
+</ol>
+</div>
+
+</div>
+<!-- <div id='' class='row'>
+<%= link_to 'Edit', edit_survey_path(@survey) %> |
+<%= link_to 'Back', surveys_path %>
+</div> -->
+<% colors = %w(warning success danger primary) %>
+<% @survey.questions.each_with_index do |question, u| %>
+      <div id="question_<%= u %>" class='question_detail row'>
+        <div class='col-md-12' style='margin-top: 50px;'>
+          <h1 class='question_text text-center'><%= "#{u+1}. #{question.content}" %></h1>
+          <div>
+          <% question.answers.each_with_index do |answer, i| %>
+          <div class='row'>
+          <div class="btn-group col-md-7">
+            <button type="button" id='a<%= answer.id %>' class="btn btn-lg btn-warning center-block"><h3><%= alphabet[i] %></h3></button>
+            <button type="button" id='a<%= answer.id %>' class="btn btn-lg btn-warning center-block" onClick="check_answer(<%= answer.correct %>, 'a<%= answer.id %>', <%= u %>);" style='margin-bottom: 50px;'>
+            <% if u == 0 %>
+              <h3><span style='letter-spacing: -1px !important; word-spacing: -1px'><%= answer.content %></span></h3>
+            <% else %>
+              <h3><%= answer.content %></h3 >
+            <% end %></button>
+          </div>
+          <div class="btn-group col-md-1">
+            <div><h1 id="countdown<%= u %>" class='countdown-container'></h1></div>
+          </div>
+          <div class="btn-group col-md-6">
+          </div>
+        </div>
+            <!-- <div class="btn btn-lg btn-warning center-block" style='margin-bottom: 30px; width: 500px;'><mark style='text-align: left;'><%= alphabet[i] %></mark><%= answer.content %></div> -->
+          <% end %>
+          </div>
+      </div>
+      </div>
+      <hr />
+<% end %>
+
+<!-- TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST -->
+<!-- 
+<div class="checkbox">
+  <label>
+    <input type="checkbox" value="">
+    Option one is this and that&mdash;be sure to include why it's great
+  </label>
+</div>
+<div class="checkbox disabled">
+  <label>
+    <input type="checkbox" value="" disabled>
+    Option two is disabled
+  </label>
+</div>
+
+<div class="radio">
+  <label>
+    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" >
+    Option one is this and that&mdash;be sure to include why it's great
+  </label>
+</div>
+<div class="radio">
+  <label>
+    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+    Option two can be something else and selecting it will deselect option one
+  </label>
+</div>
+<div class="radio disabled">
+  <label>
+    <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" disabled>
+    Option three is disabled
+  </label>
+</div> -->
+
+
+<script type="text/javascript">
+  var t = new Date();
+  t.setSeconds(t.getSeconds() + 5);
+  $('#countdown').countdown(t, function(event) {
+    $(this).html(event.strftime('%S'));
+  });
+</script>
